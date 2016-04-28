@@ -56,8 +56,8 @@ class ANDRUINO_PinTypes
       float value;
       uint16_t state;
       byte limit_count;
-      boolean used : 1;                                          //pin used?
-
+      
+      bool used : 1;
 
       ///////////////////////////////////////
       //stored in flash and updated by App

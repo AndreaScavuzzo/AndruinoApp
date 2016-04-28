@@ -1,12 +1,18 @@
-//#####################
-//Andruino version 6.11
+//#########################
+//Andruino version rel 7.00
 //A.Scavuzzo
-//#####################
+//#########################
 
-
-//6.11 vs 6.01
+//7.00
 //uint_16 per il sleep time remote config
 //crashes when the node sensor reach 65000 connections
+//new php address files (3)
+//andruino address changed (from fixed to andruino.it)
+//DDNS address changed (from fixed to checkip.dyndns.com)
+
+//Datalogger
+//if datalogger is enabled by App and by #define (DATA_LOGGING_DB 1), the sensors are sent to the Andruino external database
+
 
 
 

@@ -84,25 +84,23 @@ class ANDRUINO_JSON
 {
 private:
     
-    void JSON_Arduino_io(byte mode);
-    void JSON_Arduino_ioDigital();
-    void JSON_Arduino_ioAnalogs();
-    void JSON_Arduino_XBEEio(uint32_t UDID_LSB, byte index);
-    void JSON_Arduino_Vars();
-    void JSON_Arduino_Timers();
-    void JSON_Arduino_System();
-    void JSON_Arduino_SendAll(byte mode);
-    void JSON_FormatDigital (byte port, char *mode, byte value, boolean pulse);
+ 
+    
+
+    
+    void JSON_Arduino_SendAll(byte mode,bool type_json);
+    void JSON_FormatDigital (byte port, char *mode, byte value, boolean pulse, bool type);
+
     //    void JSON_FormatAna (byte port,char *mode, unsigned int value);
     //    void JSON_FormatVar (byte port,char *mode, float value);
-    void JSON_FormatAnaVar (byte port, char *mode, float value);
+    void JSON_FormatAnaVar (byte port, char *mode, float value, bool type);
     void JSON_PrintDataComma (char *datas, bool comma);
     void JSON_PrintDataComma (unsigned int datas, bool comma);
     void RemoteDigitalWrite(byte indexV, int duration);
     void RemoteDigitalWriteZigBee(uint8_t port, byte indexZigBeeModule);
     void RemoteDigitalWriteNRF24L(uint8_t port,uint8_t value, byte indexModule);
     short SearchRemoteNRF24LPin (byte index_node, uint8_t port) ;
-    void JSON_Arduino_NRF24Lio(byte index);
+
     void RemoteCommandNRF24L(byte command, unsigned int nrf_module, unsigned int first, unsigned int second,unsigned int third);
     
     int FindPortNumber(int PortNumber);
@@ -137,9 +135,23 @@ public:
     byte WaitForRequest_and_ParseReceivedRequest(WiFiClient _client, char *ardu_name, char *ardu_pass);
 #endif
     
-    void PerformRequestedCommand();
+    void PerformRequestedCommand(bool type_json);
     
+    void JSON_NRF24L(bool json_type);
+    void JSON_XBEE(bool json_type);
     
+    void JSON_Arduino_io(byte mode,bool type_json);    
+    void JSON_Arduino_json_NRF24Lio(byte index,bool type_json);
+    void JSON_Arduino_json_IO(bool type_json);
+    void JSON_Arduino_json_Analog(bool type_json);
+    void JSON_Arduino_json_XbeeIO(uint32_t UDID_LSB, byte index, bool type_json);
+    void JSON_Arduino_json_Vars(bool type_json);
+    
+    void JSON_Arduino_Timers();
+    void JSON_Arduino_json_System();
+    void JSON_ClientFlush();
+    void JSON_comma();
+
     
 };
 #endif

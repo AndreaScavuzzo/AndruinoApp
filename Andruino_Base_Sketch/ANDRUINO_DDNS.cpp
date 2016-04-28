@@ -38,7 +38,8 @@ bool ANDRUINO_DDNS::find_ddns() {
 #endif
 
   //connect to server
-  if (_client.connect("216.146.43.70", 80)) {          //checkip.dyndns.com/
+  if (_client.connect("checkip.dyndns.com", 80)) {          //checkip.dyndns.com/
+  //if (_client.connect("216.146.43.70", 80)) {          //checkip.dyndns.com/
     // if (_client.connect("myexternalip.com", 80)) {          //checkip.dyndns.com/
 #if DEBUG_SERIAL == 1
     Serial.println(F("Connected ddns"));

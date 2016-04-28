@@ -1,3 +1,6 @@
+#ifndef ANDRUINO_ETH_BUFFER_H
+#define ANDRUINO_ETH_BUFFER_H
+
 
 #include "ANDRUINO_0DEFINES.h"
 #include "ANDRUINO_JSON.h"
@@ -13,7 +16,7 @@ void ClientPrint(char* new_buffer);
 void ClientPrint(unsigned int integer);
 void ClientPrint(unsigned int integer, int base);
 void ClientPrintFloat(float floating, int digit);
-
+void ClientFlush();
 
 void ClientPrint(char* new_buffer) {
 
@@ -100,4 +103,6 @@ void ClientFlush() {
   strcpy (buffer_tx, "");
     
 }
+
+#endif
 

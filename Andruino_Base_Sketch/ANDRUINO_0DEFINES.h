@@ -33,7 +33,7 @@
 #define DYNAMIC_DDNS                1
 
 
-//enable data logging on server (not yet avaiable)
+//enable data logging on server (ENABLED BY DEFAULT)
 #define DATA_LOGGING_DB             1                               //enable datalogging on server
 
 

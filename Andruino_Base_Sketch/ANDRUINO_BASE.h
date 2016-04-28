@@ -22,6 +22,7 @@
 #include "ANDRUINO_XBEE.h"
 #include "ANDRUINO_IRMS.h"
 #include "ANDRUINO_0SENSORS.h"
+#include "ANDRUINO_DATA_LOGGER.h"
 
 
 #if ZIGBEE_ENABLE == 1
@@ -105,7 +106,7 @@ extern boolean check_sensor2;
 extern boolean check_DallasTemperature;
 extern boolean check_power_consumption;
 extern boolean check_timers;
-extern boolean send_sensor_req;
+extern boolean send_sensor_req,send_sensor_req2;
 
 extern boolean force_pushddns;
 extern boolean send_push_msg;

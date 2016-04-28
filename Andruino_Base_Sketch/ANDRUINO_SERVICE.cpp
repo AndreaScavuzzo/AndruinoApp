@@ -61,7 +61,6 @@ void ANDRUINO_SERVICE::InitSensorArray() {
   for (int i = 0; i < MAXANA; i++) {
     ArduinoAnalog[i].pin = i;					//used to index each pin
     /*     ArduinoAnalog[i].value=0;
-         ArduinoAnalog[i].used=0;
          ArduinoAnalog[i].max=0;
          ArduinoAnalog[i].min=0;
          ArduinoAnalog[i].enable_limits=0;*/
@@ -204,13 +203,11 @@ void ANDRUINO_SERVICE::StoreDataToFlash() {
     eeprom_write_wordNEW ((address + 5), Arduino_User_var[i].enable_limits);  //type_limits, enable_limits, port 4-5 (5,6)
   }
   for (int i = 0; i < MAXANA; i++) {              //8 byte for each ANALOG
-    if (ArduinoAnalog[i].used) {
       address = FLA_ANALOG_START_ADDRESS + MAX_BYTE_FOREACH_ANA * i;
       eeprom_write_byteNEW ((address), 0xBC);                                  //signature
       eeprom_write_wordNEW ((address + 1), ArduinoAnalog[i].max);             //MAX 0-1
       eeprom_write_wordNEW ((address + 3), ArduinoAnalog[i].min);             //MAX 2-3
       eeprom_write_wordNEW ((address + 5), ArduinoAnalog[i].enable_limits);  //type_limits & enable_limits  4-5
-    }
 
   }
   for (int i = 0; i < MAXPIN; i++) {              //6 bytes for each DIGITAL

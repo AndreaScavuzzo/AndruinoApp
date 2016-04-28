@@ -238,7 +238,7 @@ byte ANDRUINO_JSON::WaitForRequest_and_ParseReceivedRequest(WiFiClient _client, 
 //PerformRequestedCommand
 //return 1 if the command is right
 //return 0 if the command is unknown
-void ANDRUINO_JSON::PerformRequestedCommand()
+void ANDRUINO_JSON::PerformRequestedCommand(bool json_type)
 {
   unsigned int port_i;
   unsigned int action_i;
@@ -269,7 +269,7 @@ void ANDRUINO_JSON::PerformRequestedCommand()
     //action2_i=0 --> Arduino IO
     if (action2_i == 0) {                                        //write on Arduino IO
       RemoteDigitalWrite(port_i, action3_i);                   //write operation is performed (port_i=PIN, action3_i=duration if not 0, action=value)
-      JSON_Arduino_SendAll(2);                                 //2 --> read Arduino IO and systems (digitals)
+      JSON_Arduino_SendAll(2, json_type);                                 //2 --> read Arduino IO and systems (digitals)
     }
 #if ZIGBEE_ENABLE == 1
     //port_i= port number
@@ -278,7 +278,7 @@ void ANDRUINO_JSON::PerformRequestedCommand()
     //action3_i=XBee module number
     else if (action2_i == 1) {
       RemoteDigitalWriteZigBee(port_i, action3_i);             //write operation is performed
-      JSON_Arduino_SendAll(2);						     	              //2 --> read Arduino IO and systems (digitals
+      JSON_Arduino_SendAll(2, json_type);						     	              //2 --> read Arduino IO and systems (digitals
     }
 #endif
 #if NRF24L_ENABLE == 1
@@ -288,7 +288,7 @@ void ANDRUINO_JSON::PerformRequestedCommand()
     //action3_i=NRF24L module number
     else if (action2_i == 2) {
       RemoteDigitalWriteNRF24L(port_i, action_i, action3_i);             //write operation is performed
-      JSON_Arduino_SendAll(2);                                //2 --> read Arduino IO and systems (digitals
+      JSON_Arduino_SendAll(2, json_type);                                //2 --> read Arduino IO and systems (digitals
     }
 #endif
   }
@@ -308,7 +308,7 @@ void ANDRUINO_JSON::PerformRequestedCommand()
     //action2_i=2 --> NRF24L IO enabled
     //action3_i=NRF24L module number
     RemoteCommandNRF24L(port_i, action_i, action2_i, action3_i, action4_i);
-    JSON_Arduino_SendAll(0);                                //2 --> read Arduino IO and systems (digitals)
+    JSON_Arduino_SendAll(0, json_type);                                //2 --> read Arduino IO and systems (digitals)
 
   }
 #endif
@@ -332,15 +332,15 @@ void ANDRUINO_JSON::PerformRequestedCommand()
         pin_types.writeDig(ArduinoIO[action2_i], false);
       }
     }
-    JSON_Arduino_SendAll(2);								//2 --> read Arduino IO and systems (digitals)
+    JSON_Arduino_SendAll(2, json_type);								//2 --> read Arduino IO and systems (digitals)
 
   } else if (strcmp(cmd, "PwmWrite") == 0) {                       //PWM write command is decoded
     pin_types.writePWM(ArduinoIO[port_i], action_i);
-    JSON_Arduino_SendAll(2);									//2 --> read Arduino IO and systems (digitals)
+    JSON_Arduino_SendAll(2, json_type);									//2 --> read Arduino IO and systems (digitals)
 
   } else if (strcmp(cmd, "VarWrite") == 0) {                      //Var write command is decoded
     Arduino_User_var[port_i].value = (float)action_i / 10;      //var are trasmitted by 100 using int
-    JSON_Arduino_SendAll(0);									//0 --> read all
+    JSON_Arduino_SendAll(0, json_type);									//0 --> read all
 
   }
   else if (strcmp(cmd, "LimAna") == 0) {                          //download the limit for each sensor
@@ -357,7 +357,7 @@ void ANDRUINO_JSON::PerformRequestedCommand()
       SystemXBeePins[index_xbee].Pin[port_i].enable_limits = action3_i;  //action3 enable or disable the limit check
     }
 #endif
-    JSON_Arduino_SendAll(0);									//read all data
+    JSON_Arduino_SendAll(0, json_type);									//read all data
 
   } else if (strcmp(cmd, "LimDig") == 0) {                        //download the limit for each sensor
     if (action4_i == 0) {                                       //Arduino Dig is action4_i=0
@@ -371,14 +371,14 @@ void ANDRUINO_JSON::PerformRequestedCommand()
       SystemXBeePins[index_xbee].Pin[port_i].enable_limits = action3_i;  //action3 enable or disable the limit check
     }
 #endif
-    JSON_Arduino_SendAll(0);									//read all data
+    JSON_Arduino_SendAll(0, json_type);									//read all data
 
   }
   else if (strcmp(cmd, "LimVar") == 0) {                          //download the limit for each var
     Arduino_User_var[port_i].max = action_i;                    //action=max limit
     Arduino_User_var[port_i].min = action2_i;                   //action2=min limit
     Arduino_User_var[port_i].enable_limits = action3_i;         //action3 enable or disable the limit check
-    JSON_Arduino_SendAll(0);									//read all data
+    JSON_Arduino_SendAll(0, json_type);									//read all data
 
   }
 
@@ -441,7 +441,7 @@ void ANDRUINO_JSON::PerformRequestedCommand()
     //#endif
 
 
-    JSON_Arduino_SendAll(2);                                                                          //actions --> see below JSON_Arduino_SendAll descriptions (read only systems)
+    JSON_Arduino_SendAll(2, json_type);                                                                          //actions --> see below JSON_Arduino_SendAll descriptions (read only systems)
   }
 
   //http://192.168.1.15:8888/IO.json?user=arduino&pass=andrea&cmd=RdFla&port=50&action=70&action2=0&action3=0&action4=0
@@ -471,7 +471,7 @@ void ANDRUINO_JSON::PerformRequestedCommand()
   }
   //http://192.168.1.15:8888/IO.json?user=arduino&pass=andrea&cmd=ReadAll&port=0&action=0&action2=0&action3=0&action4=0           //read all sensors
   else if (strcmp(cmd, "ReadAll") == 0) {                         //Read All command is decoded
-    JSON_Arduino_SendAll(action3_i);						     //actions --> see below JSON_Arduino_SendAll descriptions
+    JSON_Arduino_SendAll(action3_i, json_type);						     //actions --> see below JSON_Arduino_SendAll descriptions
   }
   //http://192.168.1.15:8888/IO.json?user=arduino&pass=andrea&cmd=rst&port=0&action=0&action2=0&action3=0&action4=0           //reset Arduino
   else if (strcmp(cmd, "rst") == 0) {
@@ -503,14 +503,14 @@ void ANDRUINO_JSON::PerformRequestedCommand()
       andruino_app_id = action4_i;
     }
 
-    JSON_Arduino_SendAll(6);                                    //actions --> see below JSON_Arduino_SendAll descriptions (read only systems)
+    JSON_Arduino_SendAll(6, json_type);                                    //actions --> see below JSON_Arduino_SendAll descriptions (read only systems)
   }
   //http://192.168.1.15:8888/IO.json?user=arduino&pass=andrea&cmd=sync&port=0&action=0&action2=0&action3=0&action4=65000           //read all sensors
   else if (strcmp(cmd, "sync2") == 0) {                             //sync date & reset timers if the first time
 
     eeprom_write_wordNEW ((FLA_ANDRUINO_VERSION), port_i);    //write the Andruino App version on flash
     andruino_app_version = port_i;
-    JSON_Arduino_SendAll(6);
+    JSON_Arduino_SendAll(6, json_type);
   }
   //http://10.0.1.15:8888/IO.json?user=arduino&pass=andrea&cmd=Pin&port=2000&action=0&action2=0&action3=0&action4=1               //push test and pin update
   //http://10.0.1.15:8888/IO.json?user=arduino&pass=andrea&cmd=Pin&port=2000&action=0&action2=0&action3=0&action4=0               //pin update
@@ -530,15 +530,20 @@ void ANDRUINO_JSON::PerformRequestedCommand()
       send_push_msg = true;                                    //send a TEST push notification
       force_pushddns = true;                                   //send the WAN IP to the server to store it in the new account
     }
-    JSON_Arduino_SendAll(6);                                    //actions --> see below JSON_Arduino_SendAll descriptions (read only systems)
+    JSON_Arduino_SendAll(6, json_type);                                    //actions --> see below JSON_Arduino_SendAll descriptions (read only systems)
   }
   else {
-    JSON_Arduino_SendAll(0);									//read all data
+    JSON_Arduino_SendAll(0, json_type);									//read all data
   }
 
 
   ClientFlush();
 
+}
+
+void ANDRUINO_JSON::JSON_ClientFlush()
+{
+  ClientFlush();
 }
 
 /////////////////////////////////////
@@ -632,57 +637,57 @@ void ANDRUINO_JSON::RemoteDigitalWriteZigBee(uint8_t port, byte indexZigBeeModul
 //4 --> read XBee IO and systems
 //5 --> read Variables IO and systems
 //
-void ANDRUINO_JSON::JSON_Arduino_SendAll(byte mode)
+void ANDRUINO_JSON::JSON_Arduino_SendAll(byte mode, bool json_type)
 {
   ClientPrint("{");            //open first bracket
 
   switch (mode) {
 
     case 1:
-      JSON_Arduino_io(0);           //read All Arduino IO (digital + analog)
+      JSON_Arduino_io(0, json_type);           //read All Arduino IO (digital + analog)
       ClientPrint(",");
-      JSON_Arduino_System();          //read Arduino system vars
+      JSON_Arduino_json_System();          //read Arduino system vars
       break;
     case 2:
-      JSON_Arduino_io(1);           //read Arduino IO (digital)
+      JSON_Arduino_io(1, json_type);           //read Arduino IO (digital)
       ClientPrint(",");
-      JSON_Arduino_System();          //read Arduino system vars
+      JSON_Arduino_json_System();          //read Arduino system vars
       break;
     case 3:
-      JSON_Arduino_io(2);           //read Arduino IO (analog)
+      JSON_Arduino_io(2, json_type);           //read Arduino IO (analog)
       ClientPrint(",");
-      JSON_Arduino_System();          //read Arduino system vars
+      JSON_Arduino_json_System();          //read Arduino system vars
       break;
     case 4:
 #if ZIGBEE_ENABLE == 1
       for (byte k = 0; k < XBeeMaxModules; k++) {
         if (SystemXBeePins[k].RemoteAddrLSB != 0) {
-          JSON_Arduino_XBEEio(SystemXBeePins[k].RemoteAddrLSB, k);          //read ZIGBee IO
+          JSON_Arduino_json_XbeeIO(SystemXBeePins[k].RemoteAddrLSB, k, json_type);          //read ZIGBee IO, full json (false)
           ClientPrint(",");
         }
       }
 #endif
-      JSON_Arduino_System();          //read Arduino system vars
+      JSON_Arduino_json_System();          //read Arduino system vars
       break;
 
     case 5:
-      JSON_Arduino_Vars();          //read Arduino Variables
+      JSON_Arduino_json_Vars(json_type);          //read Arduino Variables
       ClientPrint(",");
-      JSON_Arduino_System();          //read Arduino system vars
+      JSON_Arduino_json_System();          //read Arduino system vars
       break;
 
     case 6:
-      JSON_Arduino_System();          //read Arduino system vars
+      JSON_Arduino_json_System();          //read Arduino system vars
       break;
 
 
     default:
-      JSON_Arduino_io(0);           //read Arduino IO
+      JSON_Arduino_io(0, json_type);           //read Arduino IO
       ClientPrint(",");
 #if ZIGBEE_ENABLE == 1
       for (byte k = 0; k < XBeeMaxModules; k++) {
         if (SystemXBeePins[k].RemoteAddrLSB != 0) {
-          JSON_Arduino_XBEEio(SystemXBeePins[k].RemoteAddrLSB, k);          //read ZIGBee IO
+          JSON_Arduino_json_XbeeIO(SystemXBeePins[k].RemoteAddrLSB, k, json_type);          //read ZIGBee IO, full json (false)
           ClientPrint(",");
         }
       }
@@ -690,14 +695,14 @@ void ANDRUINO_JSON::JSON_Arduino_SendAll(byte mode)
 #if NRF24L_ENABLE == 1
       for (byte k = 0; k < NRF24LMaxModules; k++) {
         if (SystemNRF24LPins[k].RNF24LAddr != 0) {
-          JSON_Arduino_NRF24Lio(k);          //read NRF24L IO
+          JSON_Arduino_json_NRF24Lio(k,json_type);          //read NRF24L IO, full json
           ClientPrint(",");
         }
       }
 #endif
-      JSON_Arduino_Vars();          //read Arduino Variables
+      JSON_Arduino_json_Vars(json_type);          //read Arduino Variables
       ClientPrint(",");
-      JSON_Arduino_System();          //read Arduino system vars
+      JSON_Arduino_json_System();          //read Arduino system vars
       //break;
   }
   ClientPrint("}");               //close last bracket
@@ -706,10 +711,12 @@ void ANDRUINO_JSON::JSON_Arduino_SendAll(byte mode)
 
 }
 
+void ANDRUINO_JSON::JSON_comma() {
+  ClientPrint(",");                     //
+}
 
 
-
-void ANDRUINO_JSON::JSON_Arduino_io(byte mode)
+void ANDRUINO_JSON::JSON_Arduino_io(byte mode, bool json_type)
 {
   ClientPrint("\"arduino_io\":{\"INFO\":[\"");                  //open JSON bracket, INFO ARDUINO
 
@@ -717,21 +724,70 @@ void ANDRUINO_JSON::JSON_Arduino_io(byte mode)
   ClientPrint("\"],");
   switch (mode) {
     case 1:
-      JSON_Arduino_ioDigital();
+      JSON_Arduino_json_IO(json_type);
       break;
     case 2:
-      JSON_Arduino_ioAnalogs();
+      JSON_Arduino_json_Analog(json_type);
+      break;
+    case 4:
+      JSON_Arduino_json_System();                //read Arduino system vars
       break;
     default:
-      JSON_Arduino_ioDigital();
+      JSON_Arduino_json_IO(json_type);
       ClientPrint(",");
-      JSON_Arduino_ioAnalogs();
+      JSON_Arduino_json_Analog(json_type);
   }
   ClientPrint("}");                             //close JSON bracket
 }
 
 
-void ANDRUINO_JSON::JSON_Arduino_ioDigital()
+#if NRF24L_ENABLE == 1
+void ANDRUINO_JSON::JSON_NRF24L(bool json_type)
+{
+  bool second_data = false; 
+  
+  ClientPrint("\"arduino_nrf24l\":{");                  //open JSON bracket, INFO ARDUINO
+
+  for (byte k = 0; k < NRF24LMaxModules; k++) {
+    if (SystemNRF24LPins[k].RNF24LAddr != 0) {
+      if (second_data == true)
+        ClientPrint(",");
+      else
+        second_data = true;  
+        
+      JSON_Arduino_json_NRF24Lio(k, json_type);          //read NRF24L IO, short json (true)
+    }
+  }
+
+  ClientPrint("}");                             //close JSON bracket
+}
+#endif
+
+#if ZIGBEE_ENABLE == 1
+void ANDRUINO_JSON::JSON_XBEE(bool json_type)
+{
+  bool second_data = false; 
+  
+  ClientPrint("\"arduino_xbee\":{");                  //open JSON bracket, INFO ARDUINO
+
+      for (byte k = 0; k < XBeeMaxModules; k++) {
+        if (SystemXBeePins[k].RemoteAddrLSB != 0) {
+      if (second_data == true)
+        ClientPrint(",");
+      else
+        second_data = true;  
+        
+        json.JSON_Arduino_json_XbeeIO(SystemXBeePins[k].RemoteAddrLSB, k, json_type);          //read ZIGBee IO, short json (true)
+    }
+  }
+
+  ClientPrint("}");                                   //close JSON bracket
+}
+#endif
+
+
+
+void ANDRUINO_JSON::JSON_Arduino_json_IO(bool type_json)
 {
   byte ReadChannel;
   //    float analogValue;
@@ -749,29 +805,24 @@ void ANDRUINO_JSON::JSON_Arduino_ioDigital()
       //INPUT DIGITAL
       if (ArduinoIO[i].mode == 0) {                   //0=in
         ReadChannel = pin_types.read(ArduinoIO[i]).state;                       //read input/output pins
-        JSON_FormatDigital(ArduinoIO[i].pin, "in", ReadChannel, ArduinoIO[i].pulse);
+        JSON_FormatDigital(ArduinoIO[i].pin, "in", ReadChannel, ArduinoIO[i].pulse, type_json);
         //OUTPUT DIGITAL
       } else if (ArduinoIO[i].mode == 1) {            //1=out
         ReadChannel = pin_types.read(ArduinoIO[i]).state;                       //read input/output pins
-        JSON_FormatDigital(ArduinoIO[i].pin, "out", ReadChannel, ArduinoIO[i].pulse);
+        JSON_FormatDigital(ArduinoIO[i].pin, "out", ReadChannel, ArduinoIO[i].pulse, type_json);
         ArduinoIO[i].pulse = false;
         //PWM DIGITAL
       } else if (ArduinoIO[i].mode == 2) {
         ReadChannel = ArduinoIO[i].state;                       //read pwm var
-        JSON_FormatDigital(ArduinoIO[i].pin, "pwm", ReadChannel, 0);
+        JSON_FormatDigital(ArduinoIO[i].pin, "pwm", ReadChannel, 0, type_json);
       }
     }
   }
   ClientPrint("]");                     //close JSON bracket
 
-#if ARDUINO_STDAVR == 1 && DEBUG_SERIAL_RAM == 1
-  Serial.print(F("RAM at the end of digital io:"));
-  Serial.print(freeRam());
-  Serial.println(F(" bytes"));
-#endif
 }
 
-void ANDRUINO_JSON::JSON_Arduino_ioAnalogs()
+void ANDRUINO_JSON::JSON_Arduino_json_Analog(bool type_json)
 {
   byte ReadChannel;
   //    float analogValue;
@@ -781,29 +832,29 @@ void ANDRUINO_JSON::JSON_Arduino_ioAnalogs()
   second_data = false;
   for (int i = 0; i < MAXANA; i++)
   {
-    if (ArduinoAnalog[i].used == 1) {
       if (second_data == true)
         ClientPrint(",");
       else
         second_data = true;
-
       //sensorReading = pin_types.readAnalog(ArduinoAnalog[i]).value;
       //analogValue = sensorReading * ADC_STEP;
       ArduinoAnalog[i].value = analogRead(ArduinoAnalog[i].pin) * ADC_STEP;
-      JSON_FormatAnaVar(ArduinoAnalog[i].pin, "ana", ArduinoAnalog[i].value);
-    }
+      
+      JSON_FormatAnaVar(ArduinoAnalog[i].pin, "ana", ArduinoAnalog[i].value,type_json);    //full or short mode json
+ 
   }
   ClientPrint("]");                     //close JSON bracket
-#if ARDUINO_STDAVR == 1 && DEBUG_SERIAL_RAM == 1
-  Serial.print(F("RAM at the end of analog io:"));
-  Serial.print(freeRam());
-  Serial.println(F(" bytes"));
-#endif
 }
 
 
-void ANDRUINO_JSON::JSON_Arduino_XBEEio(uint32_t UDID_LSB, byte index)
+
+
+void ANDRUINO_JSON::JSON_Arduino_json_XbeeIO(uint32_t UDID_LSB, byte index, bool type_json)
 {
+//type_json=false  --> full json  
+//type_json=true  --> short json  
+  
+  
   // Send requested information
   byte ReadChannel;
   //    float analogValue;
@@ -831,10 +882,10 @@ void ANDRUINO_JSON::JSON_Arduino_XBEEio(uint32_t UDID_LSB, byte index)
 
       if (SystemXBeePins[index].Pin[i].mode == 0) {
         ReadChannel = (byte) SystemXBeePins[index].Pin[i].value;         //read  DIGITAL pins (PREVIOUSLY READ from var)
-        JSON_FormatDigital(SystemXBeePins[index].Pin[i].pin, "in", ReadChannel, 0);
+        JSON_FormatDigital(SystemXBeePins[index].Pin[i].pin, "in", ReadChannel, 0,type_json);
       } else {
         ReadChannel = (byte) SystemXBeePins[index].Pin[i].value;         //read digital outputs
-        JSON_FormatDigital(SystemXBeePins[index].Pin[i].pin, "out", ReadChannel, 0);
+        JSON_FormatDigital(SystemXBeePins[index].Pin[i].pin, "out", ReadChannel, 0,type_json);
       }
     }
   }
@@ -849,21 +900,24 @@ void ANDRUINO_JSON::JSON_Arduino_XBEEio(uint32_t UDID_LSB, byte index)
         second_data = true;
 
       sensorReading = SystemXBeePins[index].Pin[i].value;     //read  ANALOG  pins (PREVIOUSLY READ from var)
-      JSON_FormatAnaVar(SystemXBeePins[index].Pin[i].pin, "ana", sensorReading);
+      JSON_FormatAnaVar(SystemXBeePins[index].Pin[i].pin, "ana", sensorReading, type_json);
     }
   }
   ClientPrint("]}");                      //close JSON bracket
 #endif
 }
 
-void ANDRUINO_JSON::JSON_Arduino_Vars()
+void ANDRUINO_JSON::JSON_Arduino_json_Vars(bool type_json)
 {
   byte ReadChannel;
   float analogValue;
   int sensorReading;
   boolean second_data = false;
   //ARDUINO VARIABLES
+  
+
   ClientPrint("\"arduino_var\":{\"VARIABLES\":[");  //open JSON bracket
+
   second_data = false;
   for (int i = 0; i < ARDUINO_USER_VAR_MAX; i++)
   {
@@ -872,21 +926,19 @@ void ANDRUINO_JSON::JSON_Arduino_Vars()
     }
     else
       second_data = true;
-
-    JSON_FormatAnaVar(i, "var", Arduino_User_var[i].value);
+      
+    JSON_FormatAnaVar(i, "var", Arduino_User_var[i].value, type_json);                      //short mode json  or short mode json
+ 
   }
-  ClientPrint("]}");                //close JSON bracket
 
-#if ARDUINO_STDAVR == 1 && DEBUG_SERIAL_RAM == 1
-  Serial.print(F("RAM at the end of variables:"));
-  Serial.println(freeRam());
-#endif
+  ClientPrint("]}");                //close JSON bracket 
+
+
 }
 
 
-void ANDRUINO_JSON::JSON_Arduino_System()
+void ANDRUINO_JSON::JSON_Arduino_json_System()
 {
-
 
 
   ////////////////////////////////
@@ -941,18 +993,24 @@ void ANDRUINO_JSON::JSON_Arduino_System()
   ClientPrintFloat(version_sketch, 3);                      //not yet used
   ClientPrint("]}");
 
-#if ARDUINO_STDAVR == 1 && DEBUG_SERIAL_RAM == 1
-  Serial.print(F("RAM at the end of system:"));
-  Serial.print(freeRam());
-  Serial.println(F(" bytes"));
-#endif
+
 }
 
 
-
-void  ANDRUINO_JSON::JSON_FormatDigital (byte port, char *mode, byte value, boolean pulse) {
+//type = 1  {["3","pwm","0"]}  port/mode/value
+//type = 0  {"port":"dig3","mode":"pwm","val":"0"}
+void  ANDRUINO_JSON::JSON_FormatDigital (byte port, char *mode, byte value, boolean pulse, bool type_json) {
   char buffer[50];
-  sprintf(buffer, "{\"port\":\"dig%d\",\"mode\":\"%s\",\"val\":\"%d", port, mode, value);
+  
+  if(!type_json) {
+    sprintf(buffer, "{\"port\":\"dig%d\",\"mode\":\"%s\",\"val\":\"%d", port, mode, value); //full mode json
+  }
+  else { 
+    sprintf(buffer, "[\"%d\",\"%s\",\"%d\"]", port, mode, value);                          //short mode json 
+    ClientPrint(buffer);
+    return;
+  }
+  
   ClientPrint(buffer);
   delay(DELAY_TX_ETHERNET);
   if (pulse == false)
@@ -960,8 +1018,13 @@ void  ANDRUINO_JSON::JSON_FormatDigital (byte port, char *mode, byte value, bool
   else {
     ClientPrint("P\"}");
   }
-
 }
+
+
+
+
+
+
 
 //{"port":"var0","mode":"var","val":"?"}
 /*void  ANDRUINO_JSON::JSON_FormatAna (byte port,char *mode, unsigned int value) {
@@ -971,15 +1034,28 @@ sprintf(buffer,"{\"port\":\"%s%d\",\"mode\":\"%s\",\"val\":\"%d\"}",mode, port,m
 ClientPrint(buffer);
 delay(DELAY_TX_ETHERNET);
 }*/
-void  ANDRUINO_JSON::JSON_FormatAnaVar (byte port, char *mode, float value) {
+
+
+//full mode json --> type_json=false
+//short mode json --> type_json=true
+void  ANDRUINO_JSON::JSON_FormatAnaVar (byte port, char *mode, float value, bool type_json) {
   char buffer[50];
   //mode=var, ana
-  sprintf(buffer, "{\"port\":\"%s%d\",\"mode\":\"%s\",\"val\":\"", mode, port, mode);
+  if(!type_json) 
+    sprintf(buffer, "{\"port\":\"%s%d\",\"mode\":\"%s\",\"val\":\"", mode, port, mode);        //full mode json 
+  else { 
+    ClientPrintFloat(value, 3);                                                               //short mode json  
+    return;
+  }    
+    
   ClientPrint(buffer);
   delay(DELAY_TX_ETHERNET);
   ClientPrintFloat(value, 3);      //3 digits
   ClientPrint("\"}");
 }
+
+
+ 
 
 
 void  ANDRUINO_JSON::JSON_PrintDataComma (char *datas, bool comma) {
@@ -997,7 +1073,7 @@ void  ANDRUINO_JSON::JSON_PrintDataComma (unsigned int datas, bool comma) {
 
 
 #if NRF24L_ENABLE == 1
-void ANDRUINO_JSON::JSON_Arduino_NRF24Lio(byte index)
+void ANDRUINO_JSON::JSON_Arduino_json_NRF24Lio(byte index, bool type_json)
 {
   // Send requested information
   byte ReadChannel;
@@ -1039,10 +1115,10 @@ void ANDRUINO_JSON::JSON_Arduino_NRF24Lio(byte index)
 
       if (SystemNRF24LPins[index].DigPin[i].mode == 0) {
         ReadChannel = (byte) SystemNRF24LPins[index].DigPin[i].state;         //read  DIGITAL pins (PREVIOUSLY READ from var)
-        JSON_FormatDigital(SystemNRF24LPins[index].DigPin[i].pin, "in", ReadChannel, 0);
+        JSON_FormatDigital(SystemNRF24LPins[index].DigPin[i].pin, "in", ReadChannel, 0, type_json);
       } else {
         ReadChannel = (byte) SystemNRF24LPins[index].DigPin[i].state;         //read digital outputs
-        JSON_FormatDigital(SystemNRF24LPins[index].DigPin[i].pin, "out", ReadChannel, 0);
+        JSON_FormatDigital(SystemNRF24LPins[index].DigPin[i].pin, "out", ReadChannel, 0, type_json);
         //////// IF_SERIAL_DEBUG_NRF(printf_P(PSTR("@@@@@@@@@@@@@@@@@NRF pin sent in JSON : %d, value:%d, indexModule:%d\r\n"), SystemNRF24LPins[index].DigPin[i].pin, ReadChannel, index));
       }
     }
@@ -1058,7 +1134,7 @@ void ANDRUINO_JSON::JSON_Arduino_NRF24Lio(byte index)
         second_data = true;
 
       sensorReading = ((float)SystemNRF24LPins[index].AnaPin[i].state) * SystemNRF24LPins[index].AdcStep;   //read  ANALOG  pins (PREVIOUSLY READ from var)
-      JSON_FormatAnaVar(SystemNRF24LPins[index].AnaPin[i].pin, "ana", sensorReading);
+      JSON_FormatAnaVar(SystemNRF24LPins[index].AnaPin[i].pin, "ana", sensorReading, type_json);
     }
   }
   ClientPrint("]},\"NRF24L_var_");                                                //open JSON bracket
@@ -1071,7 +1147,7 @@ void ANDRUINO_JSON::JSON_Arduino_NRF24Lio(byte index)
       ClientPrint(",");
     else
       second_data = true;
-    JSON_FormatAnaVar(i, "var", SystemNRF24LPins[index].VarPin[i].value);
+    JSON_FormatAnaVar(i, "var", SystemNRF24LPins[index].VarPin[i].value, type_json);
   }
   ClientPrint("]}");                      //close JSON bracket
 }

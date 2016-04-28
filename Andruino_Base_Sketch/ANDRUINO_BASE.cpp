@@ -11,7 +11,7 @@
 #include "ANDRUINO_VCC.h"
 #include "printf.h"
 
-float VERSION = 6.11;
+float VERSION = 7.00;
 
 
 #if ETHERNET_SHIELD == 1  || ETHERNET_SHIELD_V2 == 1
@@ -29,8 +29,8 @@ int status = WL_IDLE_STATUS;
 #endif
 
 #if ARDUINO_YUN == 1 
-#include <YunServer.h>
-#include <YunClient.h>
+//#include <YunServer.h>
+//#include <YunClient.h>
 YunServer server;
 YunClient _client;
 #endif
@@ -86,6 +86,7 @@ boolean check_DallasTemperature = true;
 boolean check_power_consumption = false;
 boolean check_timers = false;
 boolean send_sensor_req = false;
+boolean send_sensor_req2 = false;
 
 boolean force_pushddns = false;
 boolean send_push_msg = false;
@@ -161,6 +162,9 @@ void Interrupt_Timer_1sec () {
         
         if (minutes_counter % (SEND_SENSOR_REQ_EVERY) == 0)
             send_sensor_req = true;
+
+        if (minutes_counter % (SEND_SENSOR_REQ2_EVERY) == 0)
+            send_sensor_req2 = true;
         
         if (minutes_counter % (CHECK_DALLAS_TEMPERATURE_MINUTE) == 0) //every 2 minutes
             check_DallasTemperature = true;
@@ -209,7 +213,7 @@ void Interrupt_Timer_1sec () {
 #endif
 
 
-    Serial.print(F("seconds_counter:"));Serial.println(seconds_counter);
+  //  Serial.print(F("seconds_counter:"));Serial.println(seconds_counter);
     
     
 }
@@ -474,7 +478,7 @@ void ANDRUINO_BASE::Loop() {
         Arduino_User_var[2].value = network_access;
         byte clientStatus = json.WaitForRequest_and_ParseReceivedRequest(_client, ARDUINO_NAME, ARDUINO_PASS);   //buffer the received string in buffer[], parsing the received string, extract username, password, command, action, port
         if (clientStatus == 1) {
-            json.PerformRequestedCommand();                          //execute the action read above (read, etc)
+            json.PerformRequestedCommand(false);                          //execute the action read above (read, etc)  - false(full json)
         } else {
             _client.print(F("{\"error\":["));
             _client.print(clientStatus);
@@ -509,13 +513,30 @@ void ANDRUINO_BASE::Loop() {
         timers.CheckTimers(push_user, ARDUINO_NAME);
     }
 #if DATA_LOGGING_DB == 1
-    else if (send_sensor_req && pin_push_flash >0) {               //every 5 minutes send a request to server
-        send_sensor_req = false;
-        Serial.println(F("Send data to db"));
-        ANDRUINO_PUSH push;
-        push.SendHttp(push_user, ARDUINO_NAME, ARDUINO_PASS, "launch_logger");
+//    else if (send_sensor_req && pin_push_flash >0) {               //every 5 minutes send a request to server
+//        send_sensor_req = false;
+//        Serial.println(F("Send data to db"));
+//        ANDRUINO_PUSH push;
+//        push.SendHttp(push_user, ARDUINO_NAME, ARDUINO_PASS, "launch_logger");
+//    }
+    else if (send_sensor_req2 && pin_push_flash >0) {               //every 5 minutes send a request to server
+        send_sensor_req2 = false;
+        Serial.print(F("Send JSON data to db: "));Serial.println(millis());
+        ANDRUINO_DATA_LOGGER data_logger;
+        
+        data_logger.SendDataLogger(push_user, ARDUINO_NAME, ARDUINO_PASS, 0);    //analog + var + system
+        data_logger.SendDataLogger(push_user, ARDUINO_NAME, ARDUINO_PASS, 1);    //IO + system
+#if NRF24L_ENABLE == 1        
+        data_logger.SendDataLogger(push_user, ARDUINO_NAME, ARDUINO_PASS, 2);    //NRF
+#endif        
+#if ZIGBEE_ENABLE == 1
+        data_logger.SendDataLogger(push_user, ARDUINO_NAME, ARDUINO_PASS, 3);    //XBEE
+#endif
+        Serial.print(F("Finish JSON data to db: "));Serial.println(millis());
+
     }
 #endif
+
     
     /*
      //Example used to read one input and drive one output (bistable)

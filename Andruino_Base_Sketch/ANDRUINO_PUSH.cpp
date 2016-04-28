@@ -38,14 +38,14 @@ bool  ANDRUINO_PUSH::SendPush(char *push_usr, char *arduino_name, char *type, ch
 #endif
   char *result = 0;
 
-  if (_client.connect("94.23.64.3", 80)) {        ///andruino.it as number
+  if (_client.connect("andruino.it", 80)) {        ///andruino.it as number
     //	    if (_client.connect("andruino.it", 80)) {        ///andruino.it as number
 
 #if DEBUG_SERIAL == 1
     Serial.println(F("connected"));
 #endif
 
-    //http://andruino.it/push/send_push.php?user=pushuser&pin=2000
+    //http://andruino.it/push3/send_push.php?user=pushuser&pin=2000
     //&type=lim (lim)
     //&mode=ana (type, ana or var or in)
     //&port=2  (port number)
@@ -55,7 +55,7 @@ bool  ANDRUINO_PUSH::SendPush(char *push_usr, char *arduino_name, char *type, ch
     //&ardu=arduino (arduino user identify)
     //andrea_push?type=limits&mode=Ana&port=1&lim=hi&value=0.11
 
-    _client.print(F("GET /push/send_push?user="));
+    _client.print(F("GET /push3/send_push?user="));
     _client.print(push_usr);
     _client.print(F("&pin="));
     _client.print(pin_push_flash);
@@ -106,12 +106,12 @@ bool  ANDRUINO_PUSH::SendPush2(char *push_usr, char *arduino_name, char *type, c
 
   char *result = 0;
 
-  if (_client.connect("94.23.64.3", 80)) {    //andruino.it as number
+  if (_client.connect("andruino.it", 80)) {    //andruino.it as number
 #if DEBUG_SERIAL_PUSH == 1
     Serial.println(F("connected"));
 #endif
     //andrea_push?type=limits&mode=Ana&port=1&lim=hi&value=0.11
-    _client.print(F("GET /push/send_push?user="));
+    _client.print(F("GET /push3/send_push?user="));
     _client.print(push_usr);
     _client.print(F("&pin="));
     _client.print(pin_push_flash);
@@ -143,7 +143,7 @@ bool  ANDRUINO_PUSH::SendPush2(char *push_usr, char *arduino_name, char *type, c
 }
 
 
-//http://andruino.it/push/launch_logger?user=pushuser&pin=0000&ardu=arduino&pass=andrea
+//http://andruino.it/push3/launch_logger?user=pushuser&pin=0000&ardu=arduino&pass=andrea
 //SendHttp(push_user, ardu_user, adru_pass, "launch_logger")
 bool  ANDRUINO_PUSH::SendHttp(char *push_usr, char *arduino_name,char *arduino_pass, char *http_file)
 {
@@ -157,11 +157,11 @@ bool  ANDRUINO_PUSH::SendHttp(char *push_usr, char *arduino_name,char *arduino_p
 
   char *result = 0;
 
-  if (_client.connect("94.23.64.3", 80)) {    //andruino.it as number
+  if (_client.connect("andruino.it", 80)) {    //andruino.it as number
 #if DEBUG_SERIAL_PUSH == 1
     Serial.println(F("connected"));
 #endif
-    _client.print(F("GET /push/"));
+    _client.print(F("GET /push3/"));
     _client.print(http_file);
     _client.print(F("?user="));
     _client.print(push_usr);

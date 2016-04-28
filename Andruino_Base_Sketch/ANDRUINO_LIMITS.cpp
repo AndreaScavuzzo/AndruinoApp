@@ -24,7 +24,6 @@ void  ANDRUINO_LIMITS::CheckLimitsSensors(char *push_usr, char *arduino_name)
 #endif
     check_limits_ana = false;
     for (int i = 0; i < MAXANA; i++) {
-      if (ArduinoAnalog[i].used == 1) {
         ArduinoAnalog[i].value = analogRead(i) * ADC_STEP;    //read the Analog input
         byte OutOfLimits;
         unsigned int enable_limits = ArduinoAnalog[i].enable_limits;
@@ -60,7 +59,6 @@ void  ANDRUINO_LIMITS::CheckLimitsSensors(char *push_usr, char *arduino_name)
           push.SendPush(push_usr, arduino_name, "lim", "ana", "arduino_io", i, OutOfLimits, ArduinoAnalog[i].value);              //SEND PUSH MAX/MIN andrea_push?type=limits&mode=Ana&port=1&lim=hi&value=0.11
 
         }
-      }
     }
   }
   //check limits of Digital inputs
