@@ -163,6 +163,22 @@ bool  ANDRUINO_DATA_LOGGER::SendDataLogger(char *push_usr, char *arduino_name, c
 
 
 /*
+//arduino_io -->INFO
+//              ANALOGS
+//
+//arduino_var-->VARIABLES
+//
+//ardu_sys  --> ardu_date
+//              ardu_fd2
+//              ardu_fd
+                
+//arduino_nrf24l:
+//                  NRF24L_io_0 --> INFO
+//                                  DIGITALS
+//                                  ANALOGS
+//
+//                  NRF24L_var_0--> VARIABLES
+
 
 {"arduino_io":{"INFO":["0"],"ANALOGS":[2.414,2.276,1.795,1.533,1.371,1.443,1.352,1.290,1.148,1.067,1.028,0.971,1.033,1.009,1.143,1.138]},"arduino_var":{"VARIABLES":[41.100,23.700,0.000,3362.000,0.000,0.563,1.247,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000]},"ardu_tim":[255,255,255,255,255,255,255,255,255,255,255,255],"ardu_sys":{"ardu_date":[0,21,52,0],"ardu_fd2":["xxxxxxxx","0000","255.255.255.255","21414"],"ardu_fd":[0,0,0,1,0,0,7.090,7.090]}}
 

@@ -131,7 +131,7 @@
 
 
 #define SEND_SENSOR_REQ_EVERY 5
-#define SEND_SENSOR_REQ2_EVERY 1
+#define SEND_SENSOR_REQ2_EVERY 2
 
 #define DDNS_READ_AFTER_INACTIVE 60                             //check ddns every 60 seconds
 #define CHECK_DALLAS_TEMPERATURE_MINUTE 1                       //check DALLAS_TEMPERATURE every 1 minute

@@ -478,7 +478,7 @@ void ANDRUINO_BASE::Loop() {
         Arduino_User_var[2].value = network_access;
         byte clientStatus = json.WaitForRequest_and_ParseReceivedRequest(_client, ARDUINO_NAME, ARDUINO_PASS);   //buffer the received string in buffer[], parsing the received string, extract username, password, command, action, port
         if (clientStatus == 1) {
-            json.PerformRequestedCommand(false);                          //execute the action read above (read, etc)  - false(full json)
+            json.PerformRequestedCommand(true);                          //execute the action read above (read, etc)  - false(full json)
         } else {
             _client.print(F("{\"error\":["));
             _client.print(clientStatus);
