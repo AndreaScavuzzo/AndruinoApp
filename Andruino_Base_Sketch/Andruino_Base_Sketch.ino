@@ -1,5 +1,5 @@
 //#########################
-//Andruino version rel 7.00
+//Andruino version rel 7.10
 //A.Scavuzzo
 //#########################
 
@@ -13,7 +13,8 @@
 //Datalogger
 //if datalogger is enabled by App and by #define (DATA_LOGGING_DB 1), the sensors are sent to the Andruino external database
 
-
+//7.10
+//JSON stream changed (short and fast)
 
 
 #include <SPI.h>
@@ -136,6 +137,26 @@ void setup()
   pin_types.setupDig(ArduinoIO[27], OUTPUT, 0);
   pin_types.setupDig(ArduinoIO[28], OUTPUT, 0);
   pin_types.setupDig(ArduinoIO[29], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[30], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[31], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[32], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[33], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[34], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[35], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[36], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[37], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[38], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[39], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[40], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[41], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[42], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[43], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[44], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[45], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[46], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[47], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[48], OUTPUT, 0);
+  pin_types.setupDig(ArduinoIO[49], OUTPUT, 0);
 #endif
 
   //ANALOG PIN SETUP
@@ -146,7 +167,7 @@ void setup()
   pin_types.setupAnalog(ArduinoAnalog[4]);
   pin_types.setupAnalog(ArduinoAnalog[5]);                               //MAXANA=6 Arduino Uno (configure  ANDRUINO_0DEFINES.h)
 
-#if ARDUINO_DUE == 1
+#if ARDUINO_DUE == 1  || ARDUINO_2560MEGA == 1
   pin_types.setupAnalog(ArduinoAnalog[6]);
   pin_types.setupAnalog(ArduinoAnalog[7]);
   pin_types.setupAnalog(ArduinoAnalog[8]);
@@ -155,7 +176,12 @@ void setup()
   pin_types.setupAnalog(ArduinoAnalog[11]);                             //MAXANA=12 Arduino Due (configure  ANDRUINO_DFINE.h)
 #endif
 
-
+#if ARDUINO_2560MEGA == 1
+  pin_types.setupAnalog(ArduinoAnalog[12]);
+  pin_types.setupAnalog(ArduinoAnalog[13]);
+  pin_types.setupAnalog(ArduinoAnalog[14]);
+  pin_types.setupAnalog(ArduinoAnalog[15]);
+#endif
 
   SetupIns.Setup();
 

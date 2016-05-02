@@ -11,7 +11,7 @@
 #include "ANDRUINO_VCC.h"
 #include "printf.h"
 
-float VERSION = 7.00;
+float VERSION = 7.10;
 
 
 #if ETHERNET_SHIELD == 1  || ETHERNET_SHIELD_V2 == 1

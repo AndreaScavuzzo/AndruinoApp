@@ -20,7 +20,7 @@
 #define ARDUINO_USER_VAR_MAX 20                                    //variables
 
 #elif ARDUINO_2560MEGA == 1
-#define MAXPIN 30                                             //PIN from 0 to 29 
+#define MAXPIN 50                                             //PIN from 0 to 49 
 #define MAXANA 16                                             //ANA from 0 to 15
 #define ARDUINO_USER_VAR_MAX 20                               //VARIABLES
 
