@@ -11,7 +11,7 @@
 #include "ANDRUINO_VCC.h"
 #include "printf.h"
 
-float VERSION = 7.10;
+extern float VERSION;
 
 
 #if ETHERNET_SHIELD == 1  || ETHERNET_SHIELD_V2 == 1
@@ -115,6 +115,8 @@ bool global_set = false;
 unsigned int  VCC_SUPPLY_BASE;
 float ADC_STEP;
 
+unsigned int http_server_performance_ms=0;
+unsigned int http_client_performance_ms=0;
 
 
 /////////////////////////////////////////////////////
@@ -475,6 +477,8 @@ void ANDRUINO_BASE::Loop() {
     if (_client) {
         connection_isfar = 0;                                        //used to avoid ddns read during sensor reading
         network_access++;
+
+        unsigned long int http_performance_start=millis();   
         Arduino_User_var[2].value = network_access;
         byte clientStatus = json.WaitForRequest_and_ParseReceivedRequest(_client, ARDUINO_NAME, ARDUINO_PASS);   //buffer the received string in buffer[], parsing the received string, extract username, password, command, action, port
         if (clientStatus == 1) {
@@ -486,7 +490,9 @@ void ANDRUINO_BASE::Loop() {
         }
         _client.flush();
         _client.stop();
-        
+        http_server_performance_ms = (unsigned int)((unsigned long int)millis() - (unsigned long int)http_performance_start);
+        //Serial.print(F("http_performance: "));Serial.print(http_performance_ms); Serial.println(F("ms"));
+
     }
     
     
@@ -521,7 +527,7 @@ void ANDRUINO_BASE::Loop() {
 //    }
     else if (send_sensor_req2 && pin_push_flash >0) {               //every 5 minutes send a request to server
         send_sensor_req2 = false;
-        Serial.print(F("Send JSON data to db: "));Serial.println(millis());
+        unsigned long int http_performance_start=millis();   
         ANDRUINO_DATA_LOGGER data_logger;
         
         data_logger.SendDataLogger(push_user, ARDUINO_NAME, ARDUINO_PASS, 0);    //analog + var + system
@@ -532,8 +538,8 @@ void ANDRUINO_BASE::Loop() {
 #if ZIGBEE_ENABLE == 1
         data_logger.SendDataLogger(push_user, ARDUINO_NAME, ARDUINO_PASS, 3);    //XBEE
 #endif
-        Serial.print(F("Finish JSON data to db: "));Serial.println(millis());
-
+        http_client_performance_ms = (unsigned int)((unsigned long int)millis() - (unsigned long int)http_performance_start);
+        //Serial.print(F("http_send_performance: "));Serial.print(http_performance_ms); Serial.println(F("ms"));
     }
 #endif
 

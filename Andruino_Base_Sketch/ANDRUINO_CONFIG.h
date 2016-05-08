@@ -109,9 +109,9 @@
 #define PIN_PULSE_WIDTH 500                                     //IO pin pulse duration (500ms)
 
 #if WIFI_SHIELD == 1
-#define DELAY_TX_ETHERNET 0                                     //20ms for 3G transmissions
+#define DELAY_TX_ETHERNET 0                                     //0ms for wifi shield transmissions
 #else
-#define DELAY_TX_ETHERNET 20                                    //20ms for 3G transmissions
+#define DELAY_TX_ETHERNET 0                                    //0ms for ethernet shield transmissions
 #endif
 
 

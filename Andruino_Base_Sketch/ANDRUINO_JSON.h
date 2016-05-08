@@ -80,6 +80,9 @@ extern boolean nrf_radio_enable_rq;
 extern boolean nrf_radio_disable_rq;
 extern float ADC_STEP;
 
+extern unsigned int http_server_performance_ms;
+extern unsigned int http_client_performance_ms;
+
 class ANDRUINO_JSON
 {
 private:

@@ -32,8 +32,11 @@ void ClientPrint(char* new_buffer) {
   //  Serial.print("--->> Print buffer: "); Serial.println(buffer_tx);
     strcpy (buffer_tx, new_buffer);   //store the newone in the buffer for next tx
   //  if(lungh_buff >90)
-  //    Serial.println("ERRRRRRROOOOORE");     
-   
+  //    Serial.println("ERRRRRRROOOOORE");  
+
+#if DELAY_TX_ETHERNET != 0
+  delay(DELAY_TX_ETHERNET);  
+#endif   
   }
 
   else {

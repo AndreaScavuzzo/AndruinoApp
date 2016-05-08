@@ -1,5 +1,5 @@
 //#########################
-//Andruino version rel 7.10
+//Andruino version rel 7.12
 //A.Scavuzzo
 //#########################
 
@@ -16,6 +16,12 @@
 //7.10
 //JSON stream changed (short and fast)
 
+//7.12
+//delay ethernet deleted
+//performance indicator added
+
+//please, don't touch this version number
+float VERSION = 7.12;
 
 #include <SPI.h>
 #include <TimerOne.h>

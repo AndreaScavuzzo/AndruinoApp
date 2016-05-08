@@ -8,17 +8,23 @@
 #include "ANDRUINO_ETH_BUFFER.h"
 
 
-
 /*
-     {"arduino_io":{"INFO":["4354"],"DIGITALS":[{"port":"dig2","mode":"in","val":"0"},{"port":"dig3","mode":"pwm","val":"0"}],"ANALOGS":[{"port":"ana0","mode":"ana","val":"5.023"},{"port":"ana1","mode":"ana","val":"5.023"}]},
-     "NRF24L_io_0":{"INFO":["9866","012","2744","60","182","2","1004","2","1"],"DIGITALS":[{"port":"dig3","mode":"in","val":"1"}],"ANALOGS":[{"port":"ana0","mode":"ana","val":"0.721"},{"port":"ana1","mode":"ana","val":"0.906"}]},
-     "NRF24L_var_0":{"VARIABLES":[{"port":"var0","mode":"var","val":"0.000"},{"port":"var1","mode":"var","val":"47.200"}]},
-     "arduino_var":{"VARIABLES":[{"port":"var0","mode":"var","val":"0.000"},{"port":"var1","mode":"var","val":"47.200"}]},
-     "ardu_tim":[255,255,255,255,255,255,255,255,255,255,255,255],
-     "ardu_sys":{"ardu_date":[5,15,48,11],"ardu_fd2":["pushuser","xxxx","0.0.0.0","127"],
-     "ardu_fd":[4354,0,85,2,98,0,6.005,6.005]}}
 
- */
+JSON format
+{
+"arduino_io":{"INFO":["3"],"DIGITALS":[["3","pwm","0","0"],["4","out","1","0"],["5","out","0","0"],["6","out","0","0"],["7","out","0","0"],["8","out","0","0"],["9","in","0","0"],["10","out","1","0"],["11","out","0","0"],
+["12","out","0","0"],["13","out","0","0"],["14","out","0","0"],["15","out","0","0"],["16","out","0","0"],["17","out","0","0"],["18","out","0","0"],["19","out","0","0"],["20","out","0","0"],["21","out","0","0"],["22","in","0","0"],["23","in","0","0"],["24","in","0","0"],["25","in","0","0"],["26","out","0","0"],["27","out","0","0"],["28","out","0","0"],
+["29","out","0","0"]], "ANALOGS":[2.464,2.416,2.075,1.835,1.739,1.743,1.666,1.532,1.412,1.354,1.321,1.253,1.287,1.239,1.297,1.153]},
+"arduino_var":{"VARIABLES":[52.900,23.600,3.000,3423.000,0.000,0.183,0.289,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000]},
+
+"NRF24L_io_0":{"INFO":["55381","02","3281","88","344","0","1001","2","0"],"DIGITALS":[],"ANALOGS":[]},
+"NRF24L_var_0":{"VARIABLES":[0.000,0.000,0.000,0.000,55380.000]},
+
+"ardu_tim":[255,255,255,255,255,255,255,255,255,255,255,255],
+"ardu_sys":{"ardu_date":[0,9,15,33],"ardu_fd2":["XXXX","1111","255.255.255.255","21414"],"ardu_fd":[3,0,0,1,0,0,7.000,7.000]}
+} 
+
+*/
 
 
 
@@ -988,9 +994,10 @@ void ANDRUINO_JSON::JSON_Arduino_json_System()
   JSON_PrintDataComma(push_fail_cnt, 1);
   JSON_PrintDataComma(feedD, 1);
   //send version LIB
-  ClientPrintFloat(version_sketch, 3);
+  ClientPrintFloat(version_sketch, 3);                //sketch version
   ClientPrint(",");
-  ClientPrintFloat(version_sketch, 3);                      //not yet used
+  JSON_PrintDataComma(http_server_performance_ms, 1);        //http server performance
+  JSON_PrintDataComma(http_client_performance_ms, 0);        //http client performance
   ClientPrint("]}");
 
 
@@ -1013,7 +1020,7 @@ void  ANDRUINO_JSON::JSON_FormatDigital (byte port, char *mode, byte value, bool
   
   
   ClientPrint(buffer);
-  delay(DELAY_TX_ETHERNET);
+
   if (pulse == false)
     ClientPrint("\"}");
   else {
@@ -1050,7 +1057,6 @@ void  ANDRUINO_JSON::JSON_FormatAnaVar (byte port, char *mode, float value, bool
   }    
     
   ClientPrint(buffer);
-  delay(DELAY_TX_ETHERNET);
   ClientPrintFloat(value, 3);      //3 digits
   ClientPrint("\"}");
 }
@@ -1263,7 +1269,6 @@ void ANDRUINO_JSON::RemoteCommandNRF24L(byte command, unsigned int nrf_module, u
 //
 //                  NRF24L_var_0--> VARIABLES 
  
- 
 {
 "arduino_io":{"INFO":["3"],"DIGITALS":[["3","pwm","0","0"],["4","out","1","0"],["5","out","0","0"],["6","out","0","0"],["7","out","0","0"],["8","out","0","0"],["9","in","0","0"],["10","out","1","0"],["11","out","0","0"],
 ["12","out","0","0"],["13","out","0","0"],["14","out","0","0"],["15","out","0","0"],["16","out","0","0"],["17","out","0","0"],["18","out","0","0"],["19","out","0","0"],["20","out","0","0"],["21","out","0","0"],["22","in","0","0"],["23","in","0","0"],["24","in","0","0"],["25","in","0","0"],["26","out","0","0"],["27","out","0","0"],["28","out","0","0"],
@@ -1274,10 +1279,8 @@ void ANDRUINO_JSON::RemoteCommandNRF24L(byte command, unsigned int nrf_module, u
 "NRF24L_var_0":{"VARIABLES":[0.000,0.000,0.000,0.000,55380.000]},
 
 "ardu_tim":[255,255,255,255,255,255,255,255,255,255,255,255],
-"ardu_sys":{"ardu_date":[0,9,15,33],"ardu_fd2":["andrea.scavu","9411","255.255.255.255","21414"],"ardu_fd":[3,0,0,1,0,0,7.000,7.000]}
+"ardu_sys":{"ardu_date":[0,9,15,33],"ardu_fd2":["XXXX","1111","255.255.255.255","21414"],"ardu_fd":[3,0,0,1,0,0,7.000,7.000]}
 } 
- 
- 
  
  
  
