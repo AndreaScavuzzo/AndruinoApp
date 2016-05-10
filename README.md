@@ -1,6 +1,8 @@
 # AndruinoApp
 Andruino App is a wired and wireless home sensors for iPhone.
 
+![](img/icon.png)
+
 This repository contains the source code to be uploaded on Arduino to be used with the iPhone AndruinoApp
 
 Arduino (Hardware+firmware) + AndruinoApp (downloadable from AppStore)
